@@ -1,0 +1,12 @@
+build/
+*.o
+*.obj
+*.pdb
+*.ilk
+*.exe.bak
+test_core
+test_core.exe
+VoiceBar.log
+.zig-cache/
+zig-cache/
+zig-out/
