@@ -7,7 +7,7 @@
 #
 #   ./build.sh            build ../VoiceBar.exe (release, stripped)
 #   ./build.sh test       build + run the native unit tests of the core logic
-#   ./build.sh debug      build with symbols, console subsystem (shows printf)
+#   ./build.sh debug      build with symbols and a console window (for debugging)
 #
 # Windows users can use build.bat instead.
 # ---------------------------------------------------------------------------
@@ -41,7 +41,11 @@ mkdir -p build
 case "$MODE" in
   test)
     echo "== unit tests (native compiler) =="
-    cc -O2 "${WARN[@]}" tests/test_core.c src/core.c -o build/test_core -lm
+    if command -v cc >/dev/null 2>&1; then
+      cc -O2 "${WARN[@]}" tests/test_core.c src/core.c -o build/test_core -lm
+    else
+      "$ZIG" cc -O2 "${WARN[@]}" tests/test_core.c src/core.c -o build/test_core -lm
+    fi
     ./build/test_core
     ;;
 

@@ -56,6 +56,42 @@ static void tray_remove(void)
     Shell_NotifyIconW(NIM_DELETE, &s_nid);
 }
 
+#define VB_RUN_KEY L"Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+#define VB_RUN_VAL L"VoiceBar"
+
+static int autostart_enabled(void)
+{
+    HKEY key;
+    WCHAR buf[MAX_PATH * 2];
+    DWORD sz = sizeof(buf);
+    int on = 0;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, VB_RUN_KEY, 0, KEY_READ, &key) == ERROR_SUCCESS) {
+        if (RegQueryValueExW(key, VB_RUN_VAL, NULL, NULL, (BYTE *)buf, &sz) == ERROR_SUCCESS)
+            on = 1;
+        RegCloseKey(key);
+    }
+    return on;
+}
+
+static void autostart_set(int on)
+{
+    HKEY key;
+    if (RegCreateKeyExW(HKEY_CURRENT_USER, VB_RUN_KEY, 0, NULL, 0, KEY_SET_VALUE,
+                        NULL, &key, NULL) != ERROR_SUCCESS)
+        return;
+    if (on) {
+        WCHAR exe[MAX_PATH], val[MAX_PATH + 8];
+        vb_exe_dir(exe, MAX_PATH);
+        _snwprintf(val, MAX_PATH + 6, L"\"%s\\VoiceBar.exe\"", exe);
+        val[MAX_PATH + 6] = 0;
+        RegSetValueExW(key, VB_RUN_VAL, 0, REG_SZ, (const BYTE *)val,
+                       (DWORD)((wcslen(val) + 1) * sizeof(WCHAR)));
+    } else {
+        RegDeleteValueW(key, VB_RUN_VAL);
+    }
+    RegCloseKey(key);
+}
+
 static void open_in_notepad(const WCHAR *path)
 {
     ShellExecuteW(NULL, L"open", L"notepad.exe", path, NULL, SW_SHOWNORMAL);
@@ -70,6 +106,8 @@ static void show_tray_menu(void)
     log_path[0] = 0;
 
     AppendMenuW(menu, MF_STRING, VB_CMD_SHOW, L"نمایش نوار");
+    AppendMenuW(menu, MF_STRING | (autostart_enabled() ? MF_CHECKED : MF_UNCHECKED),
+                VB_CMD_AUTOSTART, L"اجرای خودکار با ویندوز");
     AppendMenuW(menu, MF_SEPARATOR, 0, NULL);
     AppendMenuW(menu, MF_STRING, VB_CMD_SETTINGS, L"تنظیمات (VoiceBar.ini)");
     AppendMenuW(menu, MF_STRING, VB_CMD_RELOAD, L"بارگذاری مجدد تنظیمات");
@@ -95,6 +133,7 @@ static void show_tray_menu(void)
         open_in_notepad(g_cfg.ini_path);
         break;
     case VB_CMD_RELOAD:   vb_app_reload_config(); break;
+    case VB_CMD_AUTOSTART: autostart_set(!autostart_enabled()); break;
     case VB_CMD_EXIT + 200: open_in_notepad(log_path); break;
     case VB_CMD_EXIT:     vb_app_quit(); break;
     default: break;

@@ -6,7 +6,7 @@
 |---|---|
 | **فایل اجرایی** | [`VoiceBar.exe`](VoiceBar.exe) — همین‌جا در ریشهٔ مخزن (بدون نیاز به نصب، بدون DLL جانبی) |
 | **سورس** | [`src/`](src) — C خالص + Win32 API |
-| **حجم** | حدود ۱۱۴ کیلوبایت |
+| **حجم** | حدود ۱۱۵ کیلوبایت |
 | **ویندوز** | Windows 8.1 / 10 / 11 — ۶۴ بیتی |
 
 ---
@@ -23,7 +23,7 @@
 | `Ctrl+Alt+Space` | باز کردن نوار / پایان دادن به ضبط |
 | `Enter` | پایان ضبط و تبدیل، سپس چسباندن متن (در حالت آماده: چسباندن) |
 | `Esc` | لغو و بستن نوار |
-| کلیک راست روی آیکون سینی | نمایش نوار، ویرایش تنظیمات، بارگذاری مجدد تنظیمات، مشاهدهٔ گزارش، خروج |
+| کلیک راست روی آیکون سینی | نمایش نوار، اجرای خودکار با ویندوز، ویرایش تنظیمات، بارگذاری مجدد تنظیمات، مشاهدهٔ گزارش، خروج |
 
 > در حالت پیش‌فرض، وقتی صحبتتان تمام می‌شود و حدود ۱٫۲ ثانیه سکوت می‌کنید، ضبط **خودکار** تمام می‌شود و متن ساخته می‌شود؛ نیازی به زدن Enter نیست (`stop_on_silence=1`).
 
@@ -105,7 +105,7 @@ line=C:\Tools\whisper\whisper-cli.exe -m C:\Tools\whisper\ggml-small.bin -l fa -
 
 | کلید | پیش‌فرض | معنی |
 |---|---|---|
-| `hotkey` | `CTRL+ALT+SPACE` | کلید میان‌بر سراسری. ترکیب `CTRL/ALT/SHIFT/WIN` با یک کلید: `A-Z`, `0-9`, `F1-F24`, `SPACE`, `ENTER`, `TAB`, `ESC`, `INSERT`, `HOME`, `END`, `;`, `-`, `=`, `,`, `.` |
+| `hotkey` | `CTRL+ALT+SPACE` | کلید میان‌بر سراسری. ترکیب `CTRL/ALT/SHIFT/WIN` با یک کلید: `A-Z`, `0-9`, `F1-F24`, `SPACE`, `ENTER`, `TAB`, `ESC`, `INSERT`, `HOME`, `END`, `PAUSE`, `SCROLL`, بک‌تیک, `-`, `=`, `,`, `.` |
 | `engine` | `auto` | `auto` / `server` / `command` / `local` |
 | `language` | خالی | زبان برای موتور `server`؛ `fa` یا `en` یا خالی برای تشخیص خودکار |
 | `auto_paste` | `1` | متن در پنجره‌ای که قبل از باز شدن نوار فعال بود چسبانده شود |
@@ -125,7 +125,9 @@ line=C:\Tools\whisper\whisper-cli.exe -m C:\Tools\whisper\ggml-small.bin -l fa -
 
 ## ۴) اجرای خودکار با ویندوز
 
-`Win + R` را بزنید، عبارت `shell:startup` را وارد کنید، و در پوشه‌ای که باز می‌شود یک «میان‌بر» (Shortcut) از `VoiceBar.exe` بسازید.
+ساده‌ترین راه: از منوی آیکون سینی گزینهٔ **«اجرای خودکار با ویندوز»** را تیک بزنید (برنامه یک مقدار در `HKCU\...\Run` می‌سازد).
+
+راه دوم: `Win + R` را بزنید، عبارت `shell:startup` را وارد کنید و در پوشه‌ای که باز می‌شود یک «میان‌بر» (Shortcut) از `VoiceBar.exe` بسازید.
 
 ---
 
@@ -190,7 +192,7 @@ tests/test_core.c     تست‌های واحد core
 ## English summary
 
 **VoiceBar** is a tiny single-file Windows utility (C + Win32 API, built with
-`zig cc -target x86_64-windows-gnu`, ~114 KB, no runtime dependencies).
+`zig cc -target x86_64-windows-gnu`, ~115 KB, no runtime dependencies).
 Press a global hotkey (`Ctrl+Alt+Space` by default) and a slim, always-on-top bar
 slides up at the bottom of the screen. Your microphone is recorded, speech is
 turned into text inside that bar, and `Enter` copies the text and pastes it into
